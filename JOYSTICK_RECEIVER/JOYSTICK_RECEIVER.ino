@@ -12,6 +12,12 @@ YOU HAVE TO INSTALL THE RF24 LIBRARY BEFORE UPLOADING THE CODE
 #define enB 7   
 #define in3 5
 #define in4 6
+#define s1  A1
+#define s2 A2
+#define s3 A3
+int sensor1;
+int sensor2;
+int sensor3;
 RF24 radio(8, 9); // CE, CSN
 const byte address[6] = "00001";
 char receivedData[32] = "";
@@ -25,6 +31,9 @@ void setup() {
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
   pinMode(in4, OUTPUT);
+  pinMode(s1,INPUT);
+  pinMode(s2,INPUT);
+  pinMode(s3,INPUT);
   Serial.begin(9600);
   radio.begin();
   radio.openReadingPipe(1, address); // ??check the other case :0
@@ -32,6 +41,9 @@ void setup() {
   radio.startListening();
 }
 void loop() {
+
+        if(radio.available()) ///CONTROL MODE
+                                   {      
   if (radio.available()) {   // If the NRF240L01 module received data
     radio.read(&receivedData, sizeof(receivedData)); // Read the data and put it into character array
     xAxis = atoi(&receivedData[0]); // Convert the data from the character array (received X value) into integer(KNOW that receivedData[0]=x,receivedData[1]=y）
@@ -107,4 +119,63 @@ void loop() {
   }
   analogWrite(enA, motorSpeedA); // Send PWM signal to motor A
   analogWrite(enB, motorSpeedB); // Send PWM signal to motor B
+                                }
+
+
+
+        //AUTOMODE
+   else
+                          {
+    sensor1=analogRead(s1);
+    sensor2=analogRead(s2);
+    sensor3=analogRead(s3);
+    //black=0 white=1
+    // left=white | middle=black | right=white =>> move forward
+    if( (sensor1==1) && (sensor2==0) && (sensor3==1) )
+    {
+     // Set Motor A forward
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
+    // Set Motor B forward
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+    analogWrite(enA, 200); // Send PWM signal to motor A
+    analogWrite(enB, 200); // Send PWM signal to motor B
+    }
+
+      
+    //black=0 white=1
+    // left=black | middle=white | right=white =>> turn left
+    if( (sensor1==0) && (sensor2==1) && (sensor3==1) )
+    {
+     // Set Motor A backward
+    digitalWrite(in1, HIGH);
+    digitalWrite(in2, LOW);
+    // Set Motor B forward
+    digitalWrite(in3, LOW);
+    digitalWrite(in4, HIGH);
+    analogWrite(enA, 100); // Send PWM signal to motor A
+    analogWrite(enB, 100); // Send PWM signal to motor B
+    
+    }
+      
+
+      
+    //black=0 white=1
+    //left=white | middle=white | right=black =>> turn right
+    if( (sensor1==1) && (sensor2==1) && (sensor3==0) )
+    {
+     // Set Motor A forward
+    digitalWrite(in1, LOW);
+    digitalWrite(in2, HIGH);
+    // Set Motor B backward
+    digitalWrite(in3, HIGH);
+    digitalWrite(in4, LOW);
+    analogWrite(enA, 100); // Send PWM signal to motor A
+    analogWrite(enB, 100); // Send PWM signal to motor B
+      }
+
+
+    
+                        }
 }
