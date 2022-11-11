@@ -10,7 +10,7 @@ YOU HAVE TO INSTALL THE RF24 LIBRARY BEFORE UPLOADING THE CODE
 
 int xPin=A1;
 int yPin=A0;
-int swPin=6;
+int swPin=2;
 RF24 radio(8,9); // CE, CSN
 const byte address[6] = "00001";
 char xyData[32] = "";
@@ -21,6 +21,7 @@ void setup() {
   pinMode(xPin,INPUT);
   pinMode(yPin,INPUT);
   pinMode(swPin,INPUT);
+  digitalWrite(swPin,HIGH); 
   radio.begin();
   radio.openWritingPipe(address);
   radio.setPALevel(RF24_PA_MIN);
@@ -31,20 +32,22 @@ void loop() {
   xAxis = analogRead(xPin); // Read Joysticks X-axis
   yAxis = analogRead(yPin); // Read Joysticks Y-axis
   swVal = digitalRead(swPin);// Read Joysticks swVal
-  Serial.println(swVal);
+
   
-  
+  if(swVal)
+  { 
   // X value
   xAxis.toCharArray(xyData, 5); // Put the String (X Value) into a character array
   radio.write(&xyData, sizeof(xyData)); // Send the array data (X value) to the other NRF24L01 modile
   // Y value
   yAxis.toCharArray(xyData, 5);
   radio.write(&xyData, sizeof(xyData));
-  /*Serial.print("x val=");
+  Serial.print("x val=");
   Serial.print(xAxis);
   Serial.print(" y val=");
   Serial.println(yAxis);
-  */
+  }
+  else{Serial.println("Turn off control mode");}
  
   delay(20);
   
