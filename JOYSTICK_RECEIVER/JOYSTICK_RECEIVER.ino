@@ -49,7 +49,7 @@ void loop() {
     xAxis = atoi(&receivedData[0]); // Convert the data from the character array (received X value) into integer(KNOW that receivedData[0]=x,receivedData[1]=y）
     delay(10);
     radio.read(&receivedData, sizeof(receivedData));
-    yAxis = atoi(&receivedData[0]);
+    yAxis = atoi(&receivedData[1]);
     delay(10);
   }
   
@@ -131,7 +131,7 @@ void loop() {
     sensor3=analogRead(s3);
     //black=0 white=1
     // left=white | middle=black | right=white =>> move forward
-    if( (sensor1==1) && (sensor2==0) && (sensor3==1) )
+    if( (sensor1>200) && (sensor2<50) && (sensor3>200) )
     {
      // Set Motor A forward
     digitalWrite(in1, LOW);
@@ -146,7 +146,7 @@ void loop() {
       
     //black=0 white=1
     // left=black | middle=white | right=white =>> turn left
-    if( (sensor1==0) && (sensor2==1) && (sensor3==1) )
+    if( (sensor1<50) && (sensor2>200) && (sensor3>200) )
     {
      // Set Motor A backward
     digitalWrite(in1, HIGH);
@@ -163,7 +163,7 @@ void loop() {
       
     //black=0 white=1
     //left=white | middle=white | right=black =>> turn right
-    if( (sensor1==1) && (sensor2==1) && (sensor3==0) )
+    if( (sensor1>200) && (sensor2>200) && (sensor3<50) )
     {
      // Set Motor A forward
     digitalWrite(in1, LOW);
