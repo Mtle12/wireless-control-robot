@@ -28,7 +28,9 @@ void setup() {
   radio.stopListening();
 }
 void loop() {
-  
+  if( radio.isChipConnected() ){Serial.println("noice");} 
+  else{Serial.println("not noice"); }
+  /*
   xAxis = analogRead(xPin); // Read Joysticks X-axis
   yAxis = analogRead(yPin); // Read Joysticks Y-axis
   swVal = digitalRead(swPin);// Read Joysticks swVal
@@ -50,5 +52,5 @@ void loop() {
   else{Serial.println("Turn off control mode");}
  
   delay(20);
-  
+*/  
 }
